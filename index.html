@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>بصيرة ثلاثي الأبعاد</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap">
+<style>
+body{margin:0}
+/* Layout: dark observation-room stage (3D) on top, step rail + explanation card below; RTL. Single dark look by choice. */
+:root{
+  --ink:#0d1220;        /* stage + page ground */
+  --panel:#151c2e;      /* cards */
+  --line:#26304a;       /* hairlines */
+  --text:#e9ecf4;       /* main text */
+  --muted:#9aa4bd;      /* secondary text */
+  --signal:#f2c200;     /* Basira yellow: data, active */
+  --voice:#47d1b8;      /* sound path */
+  --f-display:"Reem Kufi","IBM Plex Sans Arabic",Tahoma,sans-serif;
+  --f-body:"IBM Plex Sans Arabic",Tahoma,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{background:var(--ink);color:var(--text)}
+body{font-family:var(--f-body);font-size:15px;line-height:1.7;direction:rtl}
+.wrap{max-width:1080px;margin:0 auto;padding-block:20px 32px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:grid;gap:16px}
+header{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px}
+.mark{width:40px;height:40px;border-radius:50%;background:var(--signal);display:grid;place-items:center}
+.mark span{width:14px;height:14px;border-radius:50%;background:var(--ink);box-shadow:0 0 0 4px var(--signal),0 0 0 6px var(--ink)}
+h1{font-family:var(--f-display);font-size:clamp(26px,5vw,36px);margin:0;line-height:1.1;text-wrap:balance}
+.sub{color:var(--muted);margin:2px 0 0;font-size:14px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:2px 10px;direction:ltr;font-variant-numeric:tabular-nums}
+
+.stage{position:relative;width:100%;aspect-ratio:16/9;max-width:100%;border-radius:14px;overflow:hidden;
+  background:radial-gradient(120% 90% at 50% 0%,#18213a 0%,var(--ink) 70%);border:1px solid var(--line)}
+@media (max-width:640px){.stage{aspect-ratio:4/5}}
+.stage canvas{display:block;width:100%;height:100%;touch-action:none}
+.lbl{position:absolute;top:0;left:0;pointer-events:none;transform:translate(-50%,-140%);white-space:nowrap;
+  font-size:12px;font-weight:500;padding:2px 9px;border-radius:999px;background:rgba(13,18,32,.78);
+  border:1px solid var(--line);color:var(--muted);transition:color .3s,border-color .3s,opacity .3s}
+.lbl.on{color:var(--ink);background:var(--signal);border-color:var(--signal)}
+.lbl.voice.on{background:var(--voice);border-color:var(--voice)}
+.hint{position:absolute;bottom:10px;left:12px;font-size:12px;color:var(--muted);pointer-events:none}
+
+.rail{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+@media (max-width:640px){.rail{grid-template-columns:repeat(2,minmax(0,1fr))}.rail .all{grid-column:1/-1}}
+.rail button{font:inherit;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:10px;
+  padding:10px 12px;text-align:right;cursor:pointer;display:grid;gap:2px;min-width:0;transition:border-color .2s,background .2s}
+.rail button small{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
+.rail button b{font-weight:600;font-size:14px}
+.rail button:hover{border-color:#3a4766}
+.rail button:focus-visible{outline:2px solid var(--signal);outline-offset:2px}
+.rail button[aria-pressed="true"]{border-color:var(--signal);background:#211f14}
+.rail button[aria-pressed="true"] small{color:var(--signal)}
+.rail .all{background:var(--signal);color:var(--ink);border-color:var(--signal)}
+.rail .all small{color:#3d3200}
+.rail .all[aria-pressed="true"]{background:var(--signal)}
+.rail .all[aria-pressed="true"] small{color:#3d3200}
+
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px 20px;display:grid;gap:6px}
+.card h2{font-family:var(--f-display);font-size:22px;margin:0}
+.card p{margin:0;max-width:68ch;color:#cfd5e4}
+.card .tech{font-size:13px;color:var(--muted);direction:rtl}
+.bar{height:3px;background:var(--line);border-radius:3px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--signal)}
+footer{color:var(--muted);font-size:13px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+@media (prefers-reduced-motion:reduce){.lbl,.rail button{transition:none}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="mark" aria-hidden="true"><span></span></div>
+      <div>
+        <h1>كيف تعمل بصيرة؟</h1>
+        <p class="sub">نظارة ذكية تصف العالم للمكفوفين، من ضغطة الزر إلى الصوت في الأذن</p>
+      </div>
+    </div>
+    <div class="chips">
+      <span class="chip">ESP32-CAM · OV2640</span>
+      <span class="chip">Wi-Fi 2.4 GHz</span>
+      <span class="chip">5 V</span>
+      <span class="chip">Bluetooth 5.0</span>
+    </div>
+  </header>
+
+  <div class="stage" id="stage">
+    <canvas id="c" aria-label="مشهد ثلاثي الأبعاد لنظارة بصيرة واللابتوب والسحابة"></canvas>
+    <div class="hint">اسحب لتدوير المشهد</div>
+  </div>
+
+  <nav class="rail" id="rail" aria-label="خطوات العمل">
+    <button data-step="1"><small>الخطوة ١</small><b>الضغط على الزر</b></button>
+    <button data-step="2"><small>الخطوة ٢</small><b>الالتقاط والبث</b></button>
+    <button data-step="3"><small>الخطوة ٣</small><b>التحليل بالذكاء الاصطناعي</b></button>
+    <button data-step="4"><small>الخطوة ٤</small><b>النطق بالصوت</b></button>
+    <button class="all" data-step="all"><small>الدورة كاملة</small><b>▶ شغّل الكل</b></button>
+  </nav>
+
+  <section class="card" aria-live="polite">
+    <div class="bar"><i id="bar"></i></div>
+    <h2 id="t">نظرة عامة</h2>
+    <p id="d">النظارة تحمل الكاميرا والبطارية والزر فقط، والمعالجة كلها على اللابتوب. اختر خطوة لترى مسار البيانات، أو شغّل الدورة كاملة.</p>
+    <p class="tech" id="k">القطع: ESP32-CAM، بطارية 18650، لوحة TP4056 + MT3608، سماعة بلوتوث بأذن واحدة</p>
+  </section>
+
+  <footer>
+    <span>فريق بصيرة · تخصص الدعم الفني للحاسب الآلي · الكلية التقنية بظهران الجنوب</span>
+    <span>إشراف: المهندس عبدالله الوادعي</span>
+  </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function(){
+const STEPS={
+  0:{t:"نظرة عامة",d:"النظارة تحمل الكاميرا والبطارية والزر فقط، والمعالجة كلها على اللابتوب. اختر خطوة لترى مسار البيانات، أو شغّل الدورة كاملة.",k:"القطع: ESP32-CAM، بطارية 18650، لوحة TP4056 + MT3608، سماعة بلوتوث بأذن واحدة",s:"بصيرة جاهزة"},
+  1:{t:"الضغط على الزر",d:"يضغط الكفيف زرًا صغيرًا على ذراع النظارة. البطارية تغذي الكاميرا بجهد 5 فولت ثابت عبر لوحة الشحن ورافع الجهد.",k:"زر 6×6 مم بين GPIO13 و GND · بطارية 18650 (3.7V) ← MT3608 ← 5V",s:"تم الضغط على الزر"},
+  2:{t:"التقاط الصورة وبثها",d:"تلتقط كاميرا ESP32-CAM صورة لما أمامه، وترسلها لاسلكيًا عبر الواي فاي إلى اللابتوب، والاثنان متصلان بنقطة اتصال الجوال.",k:"كاميرا OV2640 · بث عبر Wi-Fi 2.4 GHz · بديل احتياطي: كاميرا USB سلكية",s:"استقبال الصورة…"},
+  3:{t:"التحليل بالذكاء الاصطناعي",d:"يرسل برنامج بصيرة الصورة إلى Gemini عبر الإنترنت، فيعيد وصفًا عربيًا مختصرًا لما في المشهد: أشخاص، أبواب، عوائق، ونصوص.",k:"Google Gemini API · مفتاح مجاني من Google AI Studio",s:"Gemini يحلل المشهد…"},
+  4:{t:"النطق بالصوت السعودي",d:"يحوّل البرنامج الوصف إلى صوت سعودي طبيعي يصل إلى سماعة بلوتوث بأذن واحدة، فتبقى الأذن الأخرى حرة لسماع ما حوله.",k:"تحويل النص إلى كلام بالعربية · سماعة Bluetooth 5.0",s:"«أمامك باب مفتوح، وكرسي على يمينك»"}
+};
+const DUR=4.2;
+const stage=document.getElementById('stage'),canvas=document.getElementById('c');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+const scene=new THREE.Scene();
+const cam=new THREE.PerspectiveCamera(40,1,.1,100);
+const controls=new THREE.OrbitControls(cam,canvas);
+controls.enablePan=false;controls.enableDamping=true;controls.minDistance=6;controls.maxDistance=18;
+controls.maxPolarAngle=Math.PI*.62;controls.minPolarAngle=Math.PI*.2;
+controls.target.set(0,.5,0);
+
+scene.add(new THREE.HemisphereLight(0xbfd0ff,0x1a1f30,.75));
+const sun=new THREE.DirectionalLight(0xffffff,.8);sun.position.set(4,8,6);scene.add(sun);
+const rim=new THREE.DirectionalLight(0x6f86ff,.5);rim.position.set(-6,3,-5);scene.add(rim);
+
+const Y=new THREE.Color(0xf2c200),V=new THREE.Color(0x47d1b8);
+function std(c,o){return new THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.6,metalness:.1},o||{}))}
+function mesh(g,m,x,y,z,p){const k=new THREE.Mesh(g,m);k.position.set(x,y,z);(p||scene).add(k);return k}
+
+// floor grid
+const grid=new THREE.GridHelper(20,20,0x2a3452,0x1b2238);grid.position.y=-2.4;scene.add(grid);
+
+// ---- person + glasses
+const H=new THREE.Group();H.position.set(-2.7,0,0);H.rotation.y=.45;scene.add(H);
+const skin=std(0x55607e,{roughness:.85});
+const head=mesh(new THREE.SphereGeometry(1,40,32),skin,0,.2,0,H);head.scale.set(.88,1.08,.95);
+mesh(new THREE.CylinderGeometry(.38,.45,.7,24),skin,0,-1.05,0,H);
+const torso=mesh(new THREE.SphereGeometry(1.3,32,16,0,Math.PI*2,0,Math.PI/2),skin,0,-2.4,0,H);torso.scale.set(1,.85,.7);
+const frameM=std(0x111317,{roughness:.35,metalness:.3});
+const lensM=new THREE.MeshStandardMaterial({color:0x1d2a44,roughness:.1,metalness:.5,transparent:true,opacity:.75});
+[-.34,.34].forEach(x=>{
+  const r=mesh(new THREE.TorusGeometry(.27,.05,12,36),frameM,x,.32,.93,H);
+  const l=mesh(new THREE.CircleGeometry(.26,32),lensM,x,.32,.925,H);
+});
+mesh(new THREE.BoxGeometry(.16,.05,.05),frameM,0,.38,.95,H);
+[-.67,.67].forEach(x=>{const t=mesh(new THREE.BoxGeometry(.06,.1,1.05),frameM,x,.34,.42,H);});
+// camera module on right temple
+const camBody=mesh(new THREE.BoxGeometry(.2,.24,.16),std(0x1a1a1a,{roughness:.4}),.76,.42,.78,H);
+const lensRing=mesh(new THREE.CylinderGeometry(.065,.065,.06,24),std(0x2b2b2b,{metalness:.6,roughness:.3}),.76,.44,.88,H);lensRing.rotation.x=Math.PI/2;
+const lensEye=mesh(new THREE.CircleGeometry(.045,24),std(0x0a1430,{emissive:0x2a4cff,emissiveIntensity:.4}),.76,.44,.912,H);
+// button
+const btnM=std(0xf2c200,{emissive:0xf2c200,emissiveIntensity:.15});
+const btn=mesh(new THREE.BoxGeometry(.09,.09,.09),btnM,.73,.42,.36,H);
+// battery
+const batM=std(0x2e7d5b,{emissive:0x47d1b8,emissiveIntensity:0});
+const bat=mesh(new THREE.CylinderGeometry(.09,.09,.55,20),batM,.76,.2,.05,H);bat.rotation.x=Math.PI/2;
+// charger board
+mesh(new THREE.BoxGeometry(.04,.14,.24),std(0x1f4fa8),.73,.25,.48,H);
+// earpiece (left ear)
+const earM=std(0x2a2f3a,{emissive:0x47d1b8,emissiveIntensity:0});
+const ear=mesh(new THREE.SphereGeometry(.15,20,16),earM,-.9,.15,0,H);ear.scale.set(.7,1,1);
+const hook=mesh(new THREE.TorusGeometry(.2,.03,8,24,Math.PI*1.2),earM,-.88,.35,-.02,H);hook.rotation.y=Math.PI/2;
+
+// ---- laptop
+const L=new THREE.Group();L.position.set(2.7,-1.2,.4);L.rotation.y=-.55;scene.add(L);
+const body=std(0x9aa3b5,{metalness:.5,roughness:.35});
+mesh(new THREE.BoxGeometry(2.6,.1,1.7),body,0,0,0,L);
+mesh(new THREE.BoxGeometry(2.2,.01,.9),std(0x3a4152),0,.055,.2,L);
+const lid=new THREE.Group();lid.position.set(0,.05,-.85);lid.rotation.x=-.2;L.add(lid);
+mesh(new THREE.BoxGeometry(2.6,1.65,.07),body,0,.82,0,lid);
+const sc=document.createElement('canvas');sc.width=768;sc.height=480;const sx=sc.getContext('2d');
+const scTex=new THREE.CanvasTexture(sc);
+const screen=mesh(new THREE.PlaneGeometry(2.42,1.5),new THREE.MeshBasicMaterial({map:scTex}),0,.82,.04,lid);
+let lastScreen='';
+function drawScreen(txt,accent){
+  const key=txt+accent;if(key===lastScreen)return;lastScreen=key;
+  sx.fillStyle='#0d1220';sx.fillRect(0,0,768,480);
+  sx.fillStyle='#151c2e';sx.fillRect(0,0,768,64);
+  sx.fillStyle='#f2c200';sx.beginPath();sx.arc(720,32,14,0,7);sx.fill();
+  sx.fillStyle='#e9ecf4';sx.font='600 30px "Reem Kufi","IBM Plex Sans Arabic",Tahoma,sans-serif';sx.textAlign='right';sx.direction='rtl';
+  sx.fillText('برنامج بصيرة',690,43);
+  sx.fillStyle=accent;sx.font='600 40px "IBM Plex Sans Arabic",Tahoma,sans-serif';sx.textAlign='center';
+  const words=txt.split(' ');let line='',lines=[];
+  words.forEach(w=>{const tst=line?line+' '+w:w;if(sx.measureText(tst).width>660&&line){lines.push(line);line=w}else line=tst});lines.push(line);
+  lines.forEach((ln,i)=>sx.fillText(ln,384,250+(i-(lines.length-1)/2)*58));
+  scTex.needsUpdate=true;
+}
+
+// ---- cloud (Gemini)
+const C=new THREE.Group();C.position.set(.6,2.6,-1.4);scene.add(C);
+const cloudM=std(0xdfe5f5,{roughness:.9,emissive:0xf2c200,emissiveIntensity:0});
+[[0,0,0,.75],[.75,-.15,0,.55],[-.75,-.15,0,.55],[.35,.35,0,.55],[-.35,.3,.1,.5],[0,-.2,.35,.55]].forEach(a=>mesh(new THREE.SphereGeometry(a[3],24,18),cloudM,a[0],a[1],a[2],C));
+
+// ---- world anchors
+scene.updateMatrixWorld(true);
+const W=o=>o.getWorldPosition(new THREE.Vector3());
+const pCam=W(lensEye),pBtn=W(btn),pBat=W(bat),pEar=W(ear),pScr=W(screen),pCloud=W(C);
+const pScrFront=pScr.clone().add(new THREE.Vector3(0,.1,0));
+function curve(a,b,lift){const m=a.clone().lerp(b,.5);m.y+=lift;return new THREE.QuadraticBezierCurve3(a,m,b)}
+const cCL=curve(pCam,pScrFront,1.4),cLC=curve(pScrFront,pCloud.clone().add(new THREE.Vector3(0,-.5,0)),.8),
+      cCL2=curve(pCloud.clone().add(new THREE.Vector3(0,-.5,0)),pScrFront,.8),cLE=curve(pScrFront,pEar,2.2),cBC=curve(pBat,pCam,.15);
+
+// path lines (faint)
+function pathLine(cv,col){const g=new THREE.BufferGeometry().setFromPoints(cv.getPoints(60));const l=new THREE.Line(g,new THREE.LineDashedMaterial({color:col,dashSize:.12,gapSize:.1,transparent:true,opacity:.0}));l.computeLineDistances();scene.add(l);return l}
+const lnCL=pathLine(cCL,0xf2c200),lnLC=pathLine(cLC,0xf2c200),lnLE=pathLine(cLE,0x47d1b8);
+
+// effects
+function dot(col,r){const m=mesh(new THREE.SphereGeometry(r||.09,16,12),new THREE.MeshBasicMaterial({color:col}),0,0,0);m.visible=false;return m}
+const packet=dot(0xf2c200,.11);
+const glowTex=(()=>{const g=document.createElement('canvas');g.width=g.height=64;const x=g.getContext('2d');const r=x.createRadialGradient(32,32,0,32,32,32);r.addColorStop(0,'rgba(255,255,255,1)');r.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=r;x.fillRect(0,0,64,64);return new THREE.CanvasTexture(g)})();
+function halo(col,s){const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex,color:col,transparent:true,depthWrite:false,blending:THREE.AdditiveBlending}));sp.scale.set(s,s,1);sp.visible=false;scene.add(sp);return sp}
+const pHalo=halo(0xf2c200,.7),flash=halo(0xffffff,1.4);flash.position.copy(pCam);
+const notes=[0,1,2,3].map(()=>({d:dot(0x47d1b8,.08),h:halo(0x47d1b8,.5)}));
+const sparks=[0,1,2].map(()=>dot(0x47d1b8,.05));
+const rings=[0,1,2].map(()=>{const r=mesh(new THREE.TorusGeometry(.3,.015,6,40),new THREE.MeshBasicMaterial({color:0xf2c200,transparent:true}),pCam.x,pCam.y,pCam.z);r.lookAt(pScr);r.visible=false;return r});
+
+// labels
+const LBL=[
+ {txt:'الزر',p:pBtn,on:[1]},{txt:'البطارية',p:pBat.clone().add(new THREE.Vector3(0,-.15,0)),on:[1]},
+ {txt:'الكاميرا ESP32-CAM',p:pCam.clone().add(new THREE.Vector3(0,.18,0)),on:[2]},
+ {txt:'اللابتوب',p:pScr.clone().add(new THREE.Vector3(0,.9,0)),on:[2,3,4]},
+ {txt:'Gemini',p:pCloud.clone().add(new THREE.Vector3(0,.95,0)),on:[3]},
+ {txt:'سماعة البلوتوث',p:pEar.clone().add(new THREE.Vector3(-.1,.25,0)),on:[4],voice:1}
+].map(o=>{const e=document.createElement('div');e.className='lbl'+(o.voice?' voice':'');e.textContent=o.txt;stage.appendChild(e);o.el=e;return o});
+
+// ---- state
+let step=0,auto=false,t0=performance.now();
+const rail=document.getElementById('rail'),bar=document.getElementById('bar');
+const elT=document.getElementById('t'),elD=document.getElementById('d'),elK=document.getElementById('k');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function setStep(s,keepAuto){
+  step=s;t0=performance.now();if(!keepAuto)auto=false;
+  const S=STEPS[s];elT.textContent=S.t;elD.textContent=S.d;elK.textContent=S.k;
+  rail.querySelectorAll('button').forEach(b=>{const v=b.dataset.step;b.setAttribute('aria-pressed',String(v==='all'?auto:(+v===s&&!auto)||(auto&&+v===s)))});
+  LBL.forEach(o=>o.el.classList.toggle('on',o.on.includes(s)));
+  controls.autoRotate=(s===0);
+}
+rail.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.step==='all'){auto=true;setStep(1,true)}else setStep(+b.dataset.step)});
+
+function resize(){const w=stage.clientWidth,h=stage.clientHeight;renderer.setSize(w,h,false);cam.aspect=w/h;
+  const narrow=w/h<1;cam.position.set(narrow?1.5:1.2,narrow?2.4:1.9,narrow?13.5:9.2);cam.fov=narrow?46:40;cam.updateProjectionMatrix();controls.update()}
+new ResizeObserver(resize).observe(stage);resize();
+controls.autoRotateSpeed=.6;
+setStep(0);
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{lastScreen='';});
+
+const v=new THREE.Vector3();
+function place(o,cv,t){o.position.copy(cv.getPoint(Math.min(Math.max(t,0),1)))}
+function ease(x){return x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2}
+function tick(now){
+  requestAnimationFrame(tick);
+  let t=((now-t0)/1000)/DUR;
+  if(auto&&t>=1){setStep(step>=4?1:step+1,true);t=0}
+  t=t%1; if(reduce)t=.6;
+  bar.style.width=(step?t*100:0)+'%';
+  // reset
+  packet.visible=pHalo.visible=flash.visible=false;rings.forEach(r=>r.visible=false);
+  notes.forEach(n=>{n.d.visible=n.h.visible=false});sparks.forEach(s=>s.visible=false);
+  btnM.emissiveIntensity=.15;batM.emissiveIntensity=0;earM.emissiveIntensity=0;cloudM.emissiveIntensity=0;lensEye.material.emissiveIntensity=.4;
+  lnCL.material.opacity=step===2?.5:.0;lnLC.material.opacity=step===3?.5:0;lnLE.material.opacity=step===4?.5:0;
+  btn.scale.setScalar(1);
+  let scrTxt=STEPS[step].s,scrCol='#e9ecf4';
+  if(step===1){
+    const press=t<.25?Math.sin(t/.25*Math.PI):0;btn.scale.set(1,1,1-press*.45);btnM.emissiveIntensity=.2+press*1.6;
+    batM.emissiveIntensity=.3+.3*Math.sin(now/200);
+    sparks.forEach((s,i)=>{const k=(t*2+i/3)%1;s.visible=true;place(s,cBC,k)});
+    scrCol='#f2c200';
+  }
+  if(step===2){
+    if(t<.18){flash.visible=true;const f=1-t/.18;flash.material.opacity=f;flash.scale.setScalar(.6+f*1.2);lensEye.material.emissiveIntensity=2*f+.4}
+    rings.forEach((r,i)=>{const k=((t*1.6)+i/3)%1;r.visible=true;r.scale.setScalar(.4+k*2.2);r.material.opacity=(1-k)*.8});
+    if(t>.12&&t<.92){const k=ease((t-.12)/.8);packet.visible=pHalo.visible=true;place(packet,cCL,k);pHalo.position.copy(packet.position)}
+    scrCol=t>.9?'#f2c200':'#9aa4bd';if(t>.9)scrTxt='تم استلام الصورة ✓';
+  }
+  if(step===3){
+    const up=t<.45,k=up?ease(t/.45):ease((t-.55)/.45);
+    if(t<.45||t>.55){packet.visible=pHalo.visible=true;place(packet,up?cLC:cCL2,k);pHalo.position.copy(packet.position)}
+    packet.material.color.copy(up?Y:V);pHalo.material.color.copy(up?Y:V);
+    cloudM.emissiveIntensity=Math.max(0,1-Math.abs(t-.5)*4)*.9;
+    if(t>.9){scrTxt='وصل الوصف ✓';scrCol='#47d1b8'}else scrCol='#f2c200';
+  } else {packet.material.color.copy(Y);pHalo.material.color.copy(Y)}
+  if(step===4){
+    notes.forEach((n,i)=>{const k=t*1.25-i*.12;if(k>0&&k<1){n.d.visible=n.h.visible=true;place(n.d,cLE,ease(k));n.h.position.copy(n.d.position)}});
+    earM.emissiveIntensity=t>.6?.5+.4*Math.sin(now/120):0;scrCol='#47d1b8';
+  }
+  drawScreen(scrTxt,scrCol);
+  controls.update();renderer.render(scene,cam);
+  const w=stage.clientWidth,h=stage.clientHeight;
+  LBL.forEach(o=>{v.copy(o.p).project(cam);const vis=v.z<1;o.el.style.opacity=vis?(step===0||o.on.includes(step)||step===0?1:.45):0;
+    o.el.style.left=((v.x+1)/2*w)+'px';o.el.style.top=((-v.y+1)/2*h)+'px'});
+}
+requestAnimationFrame(tick);
+})();
+</script>
+
+</body>
+</html>
