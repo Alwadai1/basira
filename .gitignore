@@ -218,3 +218,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# بصيرة: بيانات سرية لا تُرفع
+firmware/basira/config.h
